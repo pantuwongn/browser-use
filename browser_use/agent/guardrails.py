@@ -47,8 +47,7 @@ def describe_action_failure(error: BaseException) -> str:
     try:
         detail = str(error).strip()
     except Exception:
-        logger.exception("an action failure could not be rendered")
-        raise
+        pass
     return f"Action failed: {detail}" if detail else "Action failed: no detail was reported."
 
 
