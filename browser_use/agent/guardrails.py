@@ -58,7 +58,7 @@ MAX_CONSECUTIVE_FAILURES = 3
 
 #: What the model is told about giving up. Kept beside the number so the two cannot drift.
 SYSTEM_PROMPT_RETRY_RULE = (
-    "Never repeat an action that has already failed the maximum number of times in a row. "
+    "Rarely repeat an action that has already failed the maximum number of times in a row. "
     "Report what went wrong and choose a different approach instead of retrying forever."
 )
 
