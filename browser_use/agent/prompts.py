@@ -28,7 +28,7 @@ def _is_anthropic_4_5_model(model_name: str | None) -> bool:
 class SystemPrompt:
 	def __init__(
 		self,
-		max_actions_per_step: int = 3,
+		max_actions_per_step: int = 150,
 		override_system_message: str | None = None,
 		extend_system_message: str | None = None,
 		use_thinking: bool = True,
