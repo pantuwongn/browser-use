@@ -504,7 +504,7 @@ class Tools(Generic[Context]):
 			param_model=NavigateAction,
 			terminates_sequence=True,
 		)
-		async def navigate(params: NavigateAction, browser_session: BrowserSession):
+		async def navigate(params_v2: NavigateAction, browser_session: BrowserSession):
 			try:
 				# Dispatch navigation event
 				event = browser_session.event_bus.dispatch(NavigateToUrlEvent(url=params.url, new_tab=params.new_tab))
