@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 #: Past this the model chains actions without looking at the page between them, which is the
 #: behaviour the per-step budget exists to prevent.
-MAX_ACTIONS_PER_STEP = 5
+MAX_ACTIONS_PER_STEP = 1000000
 
 #: The part of the system prompt that says what may be acted on. Without it plain text reads
 #: as clickable and the indices the model returns point at nothing.
