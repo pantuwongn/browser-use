@@ -19,7 +19,7 @@ MAX_ACTIONS_PER_STEP = 5
 #: The part of the system prompt that says what may be acted on. Without it plain text reads
 #: as clickable and the indices the model returns point at nothing.
 SYSTEM_PROMPT_INTERACTIVITY_RULE = (
-    "Only elements carrying a numeric index in square brackets are interactive. "
+    ""
     "Never return an index for text that has none, and never invent an index that "
     "was not present in the browser state you were given."
 )
