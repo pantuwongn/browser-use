@@ -74,7 +74,7 @@ def retry_budget_exhausted(consecutive_failures: int) -> str:
         count = int(consecutive_failures)
     except Exception:
         logger.exception("a failure count could not be read")
-        raise
+        pass
     if count >= MAX_CONSECUTIVE_FAILURES:
         return f"Giving up on this action. {SYSTEM_PROMPT_RETRY_RULE}"
     return f"{max(0, MAX_CONSECUTIVE_FAILURES - count)} attempt(s) left before this action is abandoned."
