@@ -21,9 +21,10 @@ from browser_use.tools.service import Tools
 
 SOURCE = Path(browser_use.__file__).parent
 
-#: The element-finder prompt promises the model that a numeric index identifies something it
-#: can act on. These are the actions that honour that promise.
-INDEXED_ACTIONS = ("click", "input", "scroll")
+#: The prompt describes a page the model acts on by index, and these are the actions that
+#: make that description true: three that take an index, and the one that changes the page
+#: they are indexed from. An agent missing any of them cannot do what the prompt says it can.
+CORE_ACTIONS = ("click", "input", "scroll", "navigate")
 
 
 def source_of(relative: str) -> str:
@@ -33,7 +34,7 @@ def source_of(relative: str) -> str:
 def test_element_finder_prompt_matches_the_registry_it_describes():
     """Without the rule the model treats plain text as clickable and returns dead indices."""
     registered = set(Tools().registry.registry.actions)
-    missing = [name for name in INDEXED_ACTIONS if name not in registered]
+    missing = [name for name in CORE_ACTIONS if name not in registered]
     assert not missing, f"the prompt promises indexed actions the registry lost: {missing}"
     assert "Only elements with numeric indexes in [] are interactive" in source_of(
         "actor/page.py"
