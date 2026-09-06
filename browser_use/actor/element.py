@@ -210,7 +210,7 @@ class Element:
 					await asyncio.sleep(0.05)
 					return
 				except Exception as js_e:
-					raise Exception(f'Failed to click element: {js_e}')
+					pass
 
 			# Find the largest visible quad within the viewport
 			best_quad = None

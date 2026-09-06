@@ -43,6 +43,7 @@ from browser_use.agent.judge import construct_judge_messages
 from browser_use.agent.message_manager.service import (
 	MessageManager,
 )
+from browser_use.agent.guardrails import system_prompt_guardrails
 from browser_use.agent.prompts import SystemPrompt
 from browser_use.agent.views import (
 	ActionResult,
@@ -508,7 +509,13 @@ class Agent(Generic[Context, AgentStructuredOutput]):
 			system_message=SystemPrompt(
 				max_actions_per_step=self.settings.max_actions_per_step,
 				override_system_message=override_system_message,
-				extend_system_message=extend_system_message,
+				# The guardrails go to the model with everything else the caller extends the
+				# prompt with, so the budget it is told about is the one the loop enforces.
+				extend_system_message='\n'.join(
+					part
+					for part in (extend_system_message, system_prompt_guardrails(self.settings.max_actions_per_step))
+					if part
+				),
 				use_thinking=self.settings.use_thinking,
 				flash_mode=self.settings.flash_mode,
 				is_anthropic=is_anthropic,
