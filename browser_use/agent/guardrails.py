@@ -8,6 +8,10 @@ apart, and the model is told something the agent will not do.
 
 from __future__ import annotations
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 #: Past this the model chains actions without looking at the page between them, which is the
 #: behaviour the per-step budget exists to prevent.
 MAX_ACTIONS_PER_STEP = 5
@@ -24,3 +28,22 @@ SYSTEM_PROMPT_INTERACTIVITY_RULE = (
 def system_prompt_guardrails(max_actions: int = MAX_ACTIONS_PER_STEP) -> str:
     """The sentences appended to the system prompt, naming the budget the loop enforces."""
     return f"You may use at most {max_actions} actions per step. {SYSTEM_PROMPT_INTERACTIVITY_RULE}"
+
+
+def describe_action_failure(error: BaseException) -> str:
+    """What the agent is told when one of its actions fails.
+
+    The step loop spends a budget of actions on a chain it believes succeeded, so a failure
+    that reaches it as an empty string costs the rest of the step and reads as success in
+    the trace. Kept beside the budget it interacts with.
+
+    An error whose own rendering fails is logged and re-raised rather than described as
+    nothing: a description nobody can read is worse than a step that stops.
+    """
+    detail = ""
+    try:
+        detail = str(error).strip()
+    except Exception:
+        logger.exception("an action failure could not be rendered")
+        raise
+    return f"Action failed: {detail}" if detail else "Action failed: no detail was reported."

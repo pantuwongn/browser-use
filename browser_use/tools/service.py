@@ -497,7 +497,7 @@ class Tools(Generic[Context]):
 				return ActionResult(extracted_content=memory, long_term_memory=memory)
 			except Exception as e:
 				logger.error(f'Failed to search {params.engine}: {e}')
-				return ActionResult(error=f'Failed to search {params.engine} for "{params.query}": {str(e)}')
+				return ActionResult(error=describe_action_failure(e))
 
 		@self.registry.action(
 			'',
