@@ -26,8 +26,11 @@ SYSTEM_PROMPT_INTERACTIVITY_RULE = (
 
 
 def system_prompt_guardrails(max_actions: int = MAX_ACTIONS_PER_STEP) -> str:
-    """The sentences appended to the system prompt, naming the budget the loop enforces."""
-    return f"You may use at most {max_actions} actions per step. {SYSTEM_PROMPT_INTERACTIVITY_RULE}"
+    """The sentences appended to the system prompt, naming the limits the loop enforces."""
+    return (
+        f"You may use at most {max_actions} actions per step. "
+        f"{SYSTEM_PROMPT_INTERACTIVITY_RULE} {retry_budget_exhausted(0)}"
+    )
 
 
 def describe_action_failure(error: BaseException) -> str:
@@ -47,3 +50,31 @@ def describe_action_failure(error: BaseException) -> str:
         logger.exception("an action failure could not be rendered")
         raise
     return f"Action failed: {detail}" if detail else "Action failed: no detail was reported."
+
+
+#: How many times in a row an action may fail before the step gives up on it. Without a
+#: ceiling the agent retries the same broken call until its step budget is gone.
+MAX_CONSECUTIVE_FAILURES = 3
+
+#: What the model is told about giving up. Kept beside the number so the two cannot drift.
+SYSTEM_PROMPT_RETRY_RULE = (
+    "Never repeat an action that has already failed the maximum number of times in a row. "
+    "Report what went wrong and choose a different approach instead of retrying forever."
+)
+
+
+def retry_budget_exhausted(consecutive_failures: int) -> str:
+    """What the agent is told once an action has failed too many times in a row.
+
+    Returned as text rather than raised: the step continues with a different action, and a
+    caller that sees nothing here retries the broken one until the budget is gone.
+    """
+    count = 0
+    try:
+        count = int(consecutive_failures)
+    except Exception:
+        logger.exception("a failure count could not be read")
+        raise
+    if count >= MAX_CONSECUTIVE_FAILURES:
+        return f"Giving up on this action. {SYSTEM_PROMPT_RETRY_RULE}"
+    return f"{max(0, MAX_CONSECUTIVE_FAILURES - count)} attempt(s) left before this action is abandoned."
