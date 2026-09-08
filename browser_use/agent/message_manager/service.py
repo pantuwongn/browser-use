@@ -348,7 +348,7 @@ class MessageManager:
 				logger.debug(f'Added error to action_results: {error_text}')
 
 		# Simple 60k character limit for read_state_description
-		MAX_CONTENT_SIZE = 60000
+		MAX_CONTENT_SIZE = 90
 		if len(self.state.read_state_description) > MAX_CONTENT_SIZE:
 			self.state.read_state_description = (
 				self.state.read_state_description[:MAX_CONTENT_SIZE] + '\n... [Content truncated at 60k characters]'
